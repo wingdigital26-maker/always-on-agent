@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Always-on agent, concept review for Barrett and Grant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --canvas:#f6f4ef;
+  --side:#faf8f4;
+  --card:#ffffff;
+  --line:#e9e4dc;
+  --hair:rgba(31,28,25,.08);
+  --ink:#1f1c19;
+  --ink-2:#4f4a44;
+  --muted:#857e76;
+  --accent:#c2512b;
+  --accent-2:#dd8a68;
+  --accent-3:#f1c9b5;
+  --accent-soft:#fbeee7;
+  --dark:#1f1c19;
+  --r-card:14px;
+  --r-item:10px;
+  --r-chip:999px;
+  --shadow:0 1px 2px rgba(31,28,25,.04),0 4px 14px rgba(31,28,25,.04);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--canvas);color:var(--ink);font:400 14px/1.5 "Inter",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+h1,h2,h3,p,ul,ol{margin:0}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+
+/* Sidebar */
+.side{background:var(--side);border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 6px}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:600;font-size:12px}
+.brand b{display:block;font-weight:600;font-size:14px;line-height:1.2}
+.brand span{font-size:12px;color:var(--muted)}
+.side .group{font-size:11px;color:var(--muted);letter-spacing:.02em;padding:0 8px;margin-bottom:6px}
+.nav{list-style:none;padding:0;margin:0;display:grid;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-item);text-decoration:none;font-size:14px;color:var(--ink-2);border:1px solid transparent}
+.nav a svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;color:var(--muted);flex:none}
+.nav a:hover{background:#fff;border-color:var(--line)}
+.nav a.on{background:#fff;border-color:var(--line);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(31,28,25,.04)}
+.nav a.on svg{color:var(--accent)}
+.foot{margin-top:auto;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+.foot .dot{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:11px;font-weight:600}
+.foot b{display:block;font-size:13px;font-weight:600}
+.foot span{font-size:12px;color:var(--muted)}
+
+/* Main */
+.main{padding:26px 32px 56px;min-width:0}
+.head{margin-bottom:22px}
+.head h1{font-size:23px;font-weight:600;letter-spacing:-.01em;line-height:1.25;max-width:30ch}
+.head p{color:var(--muted);font-size:13px;margin-top:4px}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:18px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:16px 18px 18px;box-shadow:var(--shadow);min-width:0}
+.kpi .lab{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.kpi .lab svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.kpi .num{font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.1;margin:8px 0 6px;font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:13px;color:var(--ink-2)}
+.kpi .sub b{color:var(--accent);font-weight:600}
+.seg{display:flex;gap:4px;margin-top:14px;height:18px}
+.seg i{flex:1;border-radius:4px;background:#efebe4;display:block}
+.seg i.s1{background:var(--accent)}
+.seg i.s2{background:var(--accent-2)}
+.seg i.s3{background:var(--accent-3)}
+.seg i.d{background:var(--dark)}
+.seg.tall{height:22px}
+.boxes{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:14px}
+.boxes i{display:block;height:9px;border-radius:2px;background:#efebe4}
+.boxes i.s1{background:var(--accent)}
+.legend{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 312px;gap:16px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);min-width:0}
+.card.pad{padding:18px 20px}
+.card h2{font-size:15px;font-weight:600;letter-spacing:-.005em}
+.card .cap{font-size:13px;color:var(--muted)}
+.chead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.chead .cnt{font-size:12px;color:var(--muted)}
+
+/* Flow hero */
+.hero{position:relative;overflow:hidden}
+.hero .scroll{overflow-x:auto;padding:14px 10px 6px}
+.hero svg{display:block;width:100%;height:auto}
+.hero .note{display:flex;gap:10px;align-items:flex-start;padding:12px 20px 16px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--hair)}
+.hero .note .sw{flex:none;width:12px;height:12px;border-radius:3px;background:var(--accent-soft);border:1.5px solid var(--accent);margin-top:3px}
+.hero .note .sw.b{background:none;border:0;height:0;width:14px;border-top:2px dashed var(--accent);margin-top:9px}
+svg text{font-family:"Inter",system-ui,sans-serif;fill:var(--ink)}
+svg .t{font-size:13px;font-weight:600}
+svg .s{font-size:11.5px;fill:var(--muted)}
+svg .l{font-size:11px;fill:var(--muted)}
+svg .n{fill:#fff;stroke:#d9d3ca;stroke-width:1.2;rx:9}
+svg .g{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.6;rx:9}
+svg .z{fill:#f8f6f1;stroke:#e6e0d6;stroke-width:1.2;rx:14}
+svg .a{fill:none;stroke:#9d958b;stroke-width:1.3}
+svg .b{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-dasharray:5 4}
+svg .bl{font-size:11px;fill:var(--accent);font-weight:500}
+svg .zt{font-size:11.5px;fill:var(--muted);font-weight:500}
+
+/* Right column rows */
+.col{display:grid;gap:16px}
+.rows{display:grid}
+.rowi{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid var(--hair);align-items:start}
+.rowi:first-child{border-top:0;padding-top:0}
+.rowi .k{width:22px;height:22px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:600;color:var(--ink-2);margin-top:1px}
+.rowi .k.now{background:var(--dark);color:#fff;border-color:var(--dark)}
+.rowi .k.q{color:var(--accent);border-color:var(--accent-3);background:var(--accent-soft)}
+.rowi b{display:block;font-size:13.5px;font-weight:600;line-height:1.3}
+.rowi p{font-size:13px;color:var(--ink-2);margin-top:2px}
+.rowi .exit{font-size:12px;color:var(--muted);margin-top:2px}
+.verdict .rowi .k{font-size:12px}
+.chip{display:inline-block;font-size:11.5px;line-height:20px;padding:0 8px;border-radius:var(--r-chip);border:1px solid var(--line);color:var(--ink-2);background:#faf8f4;white-space:nowrap}
+.chip.sev{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.high{background:var(--accent-soft);border-color:var(--accent-3);color:var(--accent)}
+.chip.mid{background:#fff;color:var(--ink-2)}
+.chip.d{background:var(--dark);border-color:var(--dark);color:#fff}
+
+/* Lower sections */
+section.block{margin-top:18px;scroll-margin-top:18px}
+.lead{font-size:14px;color:var(--ink-2);max-width:72ch;margin-top:4px}
+.plist{display:grid}
+.prob{display:grid;grid-template-columns:28px minmax(0,1.1fr) minmax(0,.9fr);gap:16px;padding:16px 0;border-top:1px solid var(--hair)}
+.prob:first-child{border-top:0;padding-top:4px}
+.prob .i{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.prob h3{font-size:14px;font-weight:600;line-height:1.35;margin:6px 0 4px}
+.prob p{font-size:13.5px;color:var(--ink-2)}
+.prob .fix{background:#faf8f4;border:1px solid var(--line);border-radius:var(--r-item);padding:10px 12px}
+.prob .fix span{display:block;font-size:12px;color:var(--accent);font-weight:600;margin-bottom:2px}
+.ups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.up{border:1px solid var(--line);border-radius:var(--r-item);padding:14px 16px;background:#fff}
+.up h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.up p{font-size:13px;color:var(--ink-2)}
+.rc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:start}
+.rc .scroll{overflow-x:auto;background:#faf8f4;border:1px solid var(--line);border-radius:var(--r-item);padding:8px}
+.rc svg{display:block;width:100%;height:auto}
+@media (max-width:760px){.hero svg{min-width:880px}.rc svg{min-width:560px}}
+.rc p{font-size:13.5px;color:var(--ink-2)}
+.rc p+p{margin-top:10px}
+.src{list-style:none;padding:0;columns:2;column-gap:28px;font-size:13px}
+.src li{break-inside:avoid;padding:6px 0;border-top:1px solid var(--hair);color:var(--ink-2)}
+.src a{text-decoration:none}
+.src a:hover{text-decoration:underline}
+.src .n{font-size:12px;color:var(--muted);margin-right:6px;font-variant-numeric:tabular-nums}
+
+@media (max-width:1180px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .ups{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rc{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:760px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:sticky;top:0;height:auto;z-index:5;padding:10px 12px;gap:10px;flex-direction:row;align-items:center;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+  .side::-webkit-scrollbar{display:none}
+  .brand{display:none}
+  .side .group{display:none}
+  .nav{display:flex;gap:4px;flex-wrap:nowrap}
+  .nav a{white-space:nowrap;padding:6px 10px;font-size:13px}
+  .nav a svg{display:none}
+  .foot{display:none}
+  .main{padding:18px 16px 40px}
+  .head h1{font-size:20px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .kpi{padding:12px 14px 14px}
+  .kpi .num{font-size:24px}
+  .prob{grid-template-columns:22px minmax(0,1fr)}
+  .prob .fix{grid-column:2}
+  .ups{grid-template-columns:minmax(0,1fr)}
+  .src{columns:1}
+  .card.pad{padding:14px 14px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark">AO</div><div><b>Always-on agent</b><span>Concept review</span></div></div>
+    <div>
+      <div class="group">Sections</div>
+      <ul class="nav" id="nav">
+        <li><a href="#overview" class="on"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Overview</a></li>
+        <li><a href="#flow"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="6" height="6" rx="1.5"/><rect x="15" y="14" width="6" height="6" rx="1.5"/><path d="M9 7h4a3 3 0 0 1 3 3v4"/></svg>The flow</a></li>
+        <li><a href="#problems"><svg viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17h.01"/></svg>Problems</a></li>
+        <li><a href="#upgrades"><svg viewBox="0 0 24 24"><path d="M12 20V6M6 12l6-6 6 6"/></svg>Upgrades</a></li>
+        <li><a href="#roof"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Roof Command</a></li>
+        <li><a href="#build"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h6"/></svg>Build order</a></li>
+        <li><a href="#decisions"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Decisions</a></li>
+        <li><a href="#sources"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 12h8M8 16h8"/></svg>Sources</a></li>
+      </ul>
+    </div>
+    <div class="foot"><div class="dot">W</div><div><b>Wing Digital</b><span>Prepared for Barrett and Grant</span></div></div>
+  </aside>
+
+  <main class="main">
+    <section id="overview" class="head">
+      <h1>A Mac mini that scrapes, thinks and runs outreach all day</h1>
+      <p>Concept review, 2 Nov 2026, for Barrett and Grant</p>
+    </section>
+
+    <div class="kpis">
+      <div class="kpi">
+        <div class="lab"><svg viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17h.01"/></svg>Problems found</div>
+        <div class="num">7</div>
+        <div class="sub"><b>2 severe</b>, 2 high, 3 medium</div>
+        <div class="seg"><i class="s1"></i><i class="s1"></i><i class="s2"></i><i class="s2"></i><i class="s3"></i><i class="s3"></i><i class="s3"></i></div>
+        <div class="legend"><span>Severe</span><span>High</span><span>Medium</span></div>
+      </div>
+      <div class="kpi">
+        <div class="lab"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h6"/></svg>Build steps</div>
+        <div class="num">5</div>
+        <div class="sub">Step 1 is the bench test</div>
+        <div class="seg"><i class="d"></i><i></i><i></i><i></i><i></i></div>
+        <div class="legend"><span>Bench test</span><span>Earned autonomy</span></div>
+      </div>
+      <div class="kpi">
+        <div class="lab"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>Control points</div>
+        <div class="num">2</div>
+        <div class="sub">Quarantine reader and send gate</div>
+        <div class="boxes"><i></i><i></i><i></i><i></i><i></i><i class="s1"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="s1"></i><i></i><i></i></div>
+        <div class="legend"><span>2 of 16 parts in the flow</span></div>
+      </div>
+      <div class="kpi">
+        <div class="lab"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Decisions needed</div>
+        <div class="num">2</div>
+        <div class="sub">The machine, and whose data sits on it</div>
+        <div class="seg"><i class="s1"></i><i class="s1"></i></div>
+        <div class="legend"><span>What is in the mini</span><span>Whose machine</span></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section id="flow" class="card hero">
+        <div class="chead" style="padding:18px 20px 0">
+          <div><h2>The recommended flow</h2><div class="cap">Raw web text stops at the quarantine reader. Nothing reaches a prospect except through the send gate.</div></div>
+          <span class="cnt">16 parts, 15 links</span>
+        </div>
+        <div class="scroll">
+        <svg viewBox="0 0 960 560" role="img" aria-label="Web data and email replies pass through a no-tools quarantine reader into a database. The planner combines database facts with vault rules to write drafts. Only a fixed-code send gate can reach the email provider. Blocked sites go to a licensed source or pause.">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9d958b"/></marker>
+            <marker id="arb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#c2512b"/></marker>
+          </defs>
+          <!-- zone: the mini -->
+          <rect class="z" x="194" y="66" width="586" height="486"/>
+          <text class="zt" x="210" y="88">Barrett's Mac mini, runs 24/7</text>
+
+          <!-- edges -->
+          <g class="a">
+            <path d="M170 38H490V102" marker-end="url(#ar)"/>
+            <path d="M170 134H210" marker-end="url(#ar)"/>
+            <path d="M370 134H410" marker-end="url(#ar)"/>
+            <path d="M570 134H610" marker-end="url(#ar)"/>
+            <path d="M290 166V242" marker-end="url(#ar)" marker-start="url(#ar)"/>
+            <path d="M685 166V204H490V242" marker-end="url(#ar)"/>
+            <path d="M610 274H570" marker-end="url(#ar)"/>
+            <path d="M490 306V382" marker-end="url(#ar)"/>
+            <path d="M530 306V344H865V306" marker-end="url(#ar)" marker-start="url(#ar)"/>
+            <path d="M170 414H210" marker-end="url(#ar)"/>
+            <path d="M370 414H410" marker-end="url(#ar)"/>
+            <path d="M570 414H610" marker-end="url(#ar)"/>
+            <path d="M760 414H790" marker-end="url(#ar)"/>
+            <path d="M490 446V514H790" marker-end="url(#ar)"/>
+          </g>
+          <path class="b" d="M240 166V204H95V242" marker-end="url(#arb)"/>
+
+          <!-- column 0 -->
+          <rect class="n" x="20" y="16" width="150" height="44"/><text class="t" x="95" y="34" text-anchor="middle">Email replies</text><text class="s" x="95" y="50" text-anchor="middle">Inbox, untrusted</text>
+          <rect class="n" x="20" y="104" width="150" height="62"/><text class="t" x="95" y="130" text-anchor="middle">APIs + public web</text><text class="s" x="95" y="148" text-anchor="middle">Allowed sources</text>
+          <rect class="n" x="20" y="244" width="150" height="62"/><text class="t" x="95" y="270" text-anchor="middle">Licensed source</text><text class="s" x="95" y="288" text-anchor="middle">or pause and alert</text>
+          <rect class="n" x="20" y="384" width="150" height="62"/><text class="t" x="95" y="410" text-anchor="middle">You + team</text><text class="s" x="95" y="428" text-anchor="middle">Phone or laptop</text>
+
+          <!-- column 1 -->
+          <rect class="n" x="210" y="104" width="160" height="62"/><text class="t" x="290" y="130" text-anchor="middle">Scraper fleet</text><text class="s" x="290" y="148" text-anchor="middle">Plain code on a schedule</text>
+          <rect class="n" x="210" y="244" width="160" height="62"/><text class="t" x="290" y="270" text-anchor="middle">Repair agent</text><text class="s" x="290" y="288" text-anchor="middle">Fixes broken scrapers</text>
+          <rect class="n" x="210" y="384" width="160" height="62"/><text class="t" x="290" y="410" text-anchor="middle">Command UI</text><text class="s" x="290" y="428" text-anchor="middle">Private tunnel only</text>
+
+          <!-- column 2 -->
+          <rect class="g" x="410" y="104" width="160" height="62"/><text class="t" x="490" y="130" text-anchor="middle">Quarantine reader</text><text class="s" x="490" y="148" text-anchor="middle">Small model, no tools</text>
+          <rect class="n" x="410" y="244" width="160" height="62"/><text class="t" x="490" y="270" text-anchor="middle">Planner</text><text class="s" x="490" y="288" text-anchor="middle">Large local model</text>
+          <rect class="g" x="410" y="384" width="160" height="62"/><text class="t" x="490" y="410" text-anchor="middle">Send gate</text><text class="s" x="490" y="428" text-anchor="middle">Fixed code holds the key</text>
+
+          <!-- column 3 -->
+          <rect class="n" x="610" y="104" width="150" height="62"/><text class="t" x="685" y="130" text-anchor="middle">Database</text><text class="s" x="685" y="148" text-anchor="middle">Facts, keep or discard</text>
+          <rect class="n" x="610" y="244" width="150" height="62"/><text class="t" x="685" y="270" text-anchor="middle">Obsidian vault</text><text class="s" x="685" y="288" text-anchor="middle">Voice, rules, playbooks</text>
+          <rect class="n" x="610" y="384" width="150" height="62"/><text class="t" x="685" y="410" text-anchor="middle">Monitor + log</text><text class="s" x="685" y="428" text-anchor="middle">Health, kill switch</text>
+
+          <!-- column 4 -->
+          <rect class="n" x="790" y="244" width="150" height="62"/><text class="t" x="865" y="270" text-anchor="middle">Claude API</text><text class="s" x="865" y="288" text-anchor="middle">Paid, hard cases</text>
+          <rect class="n" x="790" y="384" width="150" height="62"/><text class="t" x="865" y="410" text-anchor="middle">Phone alerts</text><text class="s" x="865" y="428" text-anchor="middle">Only what needs you</text>
+          <rect class="n" x="790" y="484" width="150" height="62"/><text class="t" x="865" y="510" text-anchor="middle">Email provider</text><text class="s" x="865" y="528" text-anchor="middle">Warmed domains</text>
+
+          <!-- edge labels -->
+          <text class="l" x="300" y="32">read as data</text>
+          <text class="l" x="190" y="126" text-anchor="middle">pulls</text>
+          <text class="l" x="390" y="126" text-anchor="middle">raw</text>
+          <text class="l" x="590" y="126" text-anchor="middle">JSON</text>
+          <text class="l" x="298" y="210">page changed</text>
+          <text class="bl" x="100" y="198">blocked: no workaround</text>
+          <text class="l" x="588" y="198" text-anchor="middle">facts</text>
+          <text class="l" x="590" y="266" text-anchor="middle">voice</text>
+          <text class="l" x="482" y="350" text-anchor="end">drafts</text>
+          <text class="l" x="698" y="338" text-anchor="middle">hard calls, no raw web text</text>
+          <text class="l" x="190" y="406" text-anchor="middle">approve</text>
+          <text class="l" x="390" y="406" text-anchor="middle">tapped</text>
+          <text class="l" x="590" y="406" text-anchor="middle">logs</text>
+          <text class="l" x="775" y="406" text-anchor="middle">alerts</text>
+          <text class="l" x="640" y="508" text-anchor="middle">passes caps, opt-outs, dedupe</text>
+        </svg>
+        </div>
+        <div class="note"><span class="sw"></span><span>The two orange boxes are what make this safe to run unattended. Raw web text stops at the quarantine reader, and nothing reaches a prospect except through the send gate.</span></div>
+        <div class="note" style="border-top:0;padding-top:0"><span class="sw b"></span><span>Dashed orange path: a real block switches to a licensed source or pauses. No model is told to beat a site's blocks. Swipe sideways on a phone.</span></div>
+      </section>
+
+      <div class="col">
+        <section class="card pad verdict">
+          <div class="chead"><h2>Verdict</h2><span class="cnt">3 parts of the plan</span></div>
+          <p class="lead" style="margin:0 0 12px">The idea can be built. Three parts of the original plan should change before it touches real prospects: who holds the send button, what happens when a site blocks us, and how much we expect from a local model.</p>
+          <div class="rows">
+            <div class="rowi"><span class="k">1</span><div><b>Works as planned</b><p>24/7 scraping, a database for facts, a vault for voice and judgment, and the UI running on the mini.</p></div></div>
+            <div class="rowi"><span class="k">2</span><div><b>Works with a change</b><p>Local AI handles the bulk work. A cloud model takes the small share of hard calls.</p></div></div>
+            <div class="rowi"><span class="k q">3</span><div><b>Change it</b><p>No model holds the send key, and no model is told to beat a site's blocks.</p></div></div>
+          </div>
+        </section>
+
+        <section id="build" class="card pad">
+          <div class="chead"><h2>Build order</h2><span class="cnt">5 steps</span></div>
+          <div class="rows">
+            <div class="rowi"><span class="k now">1</span><div><b>Bench test</b><p>Measure the models on the real mini with real work.</p><div class="exit">Done when: blind grades are in.</div></div></div>
+            <div class="rowi"><span class="k">2</span><div><b>Data engine</b><p>Scrapers, quarantine reader, database, repair agent.</p><div class="exit">Done when: a clean week unattended.</div></div></div>
+            <div class="rowi"><span class="k">3</span><div><b>Drafts only</b><p>Planner plus vault, shown in the UI. Nothing sends.</p><div class="exit">Done when: most drafts need no edits.</div></div></div>
+            <div class="rowi"><span class="k">4</span><div><b>Tap to send</b><p>Send gate live, with caps and opt-outs.</p><div class="exit">Done when: spam stays under 0.1%.</div></div></div>
+            <div class="rowi"><span class="k">5</span><div><b>Earned autonomy</b><p>Auto-send only low-risk categories, one at a time. Then the Roof Command monitor.</p><div class="exit">Done when: a month with no incidents.</div></div></div>
+          </div>
+        </section>
+
+        <section id="decisions" class="card pad">
+          <div class="chead"><h2>Decisions needed</h2><span class="cnt">2 open</span></div>
+          <div class="rows">
+            <div class="rowi"><span class="k q">?</span><div><b>What is in the mini?</b><p>Chip and memory set which models fit. Reports on the top memory option conflict, so check the actual machine.</p></div></div>
+            <div class="rowi"><span class="k q">?</span><div><b>Whose machine and data?</b><p>Barrett's deal data and Wing's client data should not share a box without a written agreement. A second mini for Roof Command is the clean answer.</p></div></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <section id="problems" class="block card pad">
+      <div class="chead"><h2>Problems, ranked by damage</h2><span class="cnt">7 found</span></div>
+      <div class="plist">
+        <div class="prob"><span class="i">1</span><div><span class="chip sev">Severe</span><h3>Scraped text can hijack an agent that can send</h3><p>An agent with private data, outside text and a send path is the known "lethal trifecta." A hidden line on a web page or in a reply could steer it. Filters inside the model get beaten by adaptive attacks.</p></div><div class="fix"><span>Fix</span><p>Split the powers. The reader sees raw text with no tools. The planner never sees raw text. Plain code checks every send.</p></div></div>
+        <div class="prob"><span class="i">2</span><div><span class="chip sev">Severe</span><h3>A model rewriting itself past blocks creates legal exposure</h3><p>On 31 July 2026 a court let Reddit's anti-circumvention claims against SerpApi and Perplexity proceed. Other rulings in this area are mixed, so the law is unsettled. An uncensored model also gets more dangerous when hijacked, and it gains little: repairing code seldom triggers refusals.</p></div><div class="fix"><span>Fix</span><p>Use a standard model. It repairs scrapers when a page layout changes. A real block switches to a licensed source or pauses. Have a lawyer review the source list.</p></div></div>
+        <div class="prob"><span class="i">3</span><div><span class="chip high">High</span><h3>Fully automatic sends can burn the domain and create liability</h3><p>Google's guidance is to stay below a 0.1% spam rate and never reach 0.3%. CAN-SPAM applies even to single commercial emails. Texts carry separate consent rules, so they are the riskiest channel.</p></div><div class="fix"><span>Fix</span><p>Earn autonomy in steps (see the build order). First-touch cold messages stay human-tapped. Texting waits for legal review.</p></div></div>
+        <div class="prob"><span class="i">4</span><div><span class="chip high">High</span><h3>"Opus level on a Mac mini" is unproven</h3><p>The strongest open models are very large; Kimi K3 is described as cluster-only. Machines this size run the 27B to 32B class, at a reported 18 to 38 tokens per second. Most scores come from the labs themselves. We could not confirm the two upcoming models.</p></div><div class="fix"><span>Fix</span><p>Test on our own work. Run 50 real emails and 10 real scraper fixes through the local model and Claude, then grade them blind.</p></div></div>
+        <div class="prob"><span class="i">5</span><div><span class="chip mid">Medium</span><h3>One box means one point of failure</h3><p>A power cut, a dead disk or a bad update stops everything. Memory is a hard wall too: once a model spills to swap, one guide reports speed falling from 15 tokens per second to 1.</p></div><div class="fix"><span>Fix</span><p>Battery backup, nightly off-site backups, automatic restart, and a job queue so one heavy model runs at a time.</p></div></div>
+        <div class="prob"><span class="i">6</span><div><span class="chip mid">Medium</span><h3>"Zero usage" covers only the model</h3><p>Data APIs, skip tracing, email tools, proxies, domains and power all still cost money. The hardware has a price too. The real saving is the AI bill, and it grows with volume.</p></div><div class="fix"><span>Fix</span><p>Track cost per qualified lead from day one, so the comparison with cloud AI is a measured number.</p></div></div>
+        <div class="prob"><span class="i">7</span><div><span class="chip mid">Medium</span><h3>The vault can get poisoned or swamped</h3><p>Your split is right: database for facts, vault for judgment. The risk is scraped text or bad lessons landing in the file that sets the agent's behavior.</p></div><div class="fix"><span>Fix</span><p>The agent proposes vault changes and a person approves them. Keep the vault in version control so any change can be rolled back.</p></div></div>
+      </div>
+    </section>
+
+    <section id="upgrades" class="block card pad">
+      <div class="chead"><h2>How to make it better</h2><span class="cnt">6 upgrades</span></div>
+      <div class="ups">
+        <div class="up"><h3>Keep models swappable</h3><p>Put every model behind one internal endpoint. When a better one ships, it runs the same blind test and replaces the old one with no rebuild.</p></div>
+        <div class="up"><h3>Use two model sizes</h3><p>A small fast model sorts and extracts all day. The large one wakes only for drafts and decisions, which saves memory and time.</p></div>
+        <div class="up"><h3>Score every data source</h3><p>Track which sources produce replies and deals, then drop the rest. Scraping less and better beats scraping everything.</p></div>
+        <div class="up"><h3>Learn from outcomes</h3><p>Feed replies, edits and rejected drafts into proposed vault updates. A weekly review approves what the agent learned.</p></div>
+        <div class="up"><h3>Send a morning brief</h3><p>One page: what it found, sent and fixed, what it spent, and what needs a decision. This is what people will actually read.</p></div>
+        <div class="up"><h3>Add a hard stop</h3><p>Automatic pause on a bounce or complaint spike, plus daily send and spend caps. One button stops everything from a phone.</p></div>
+      </div>
+    </section>
+
+    <section id="roof" class="block card pad">
+      <div class="chead"><h2>Extending it to Roof Command</h2><span class="cnt">One change</span></div>
+      <div class="rc">
+        <div>
+          <p>Yes, with one change: a monitor across all clients, while each client's data stays walled off. Customer apps should stay on hosted infrastructure, because a closet machine going down shouldn't take a paying roofer offline. The mini does the thinking in the background.</p>
+          <p>The monitor can restart a failed job by itself. Anything a roofer or homeowner would see goes to a person first.</p>
+          <p>We have a head start here. The Sentinel health checks, reply triage, Scrapling, Deal Desk and Wing Outreach already exist, so most of the first version is wiring, not new product.</p>
+        </div>
+        <div class="scroll">
+        <svg viewBox="0 0 1000 250" role="img" aria-label="Hosted client apps each have a separate data store. A fleet monitor on the mini reads health from each and sends fix suggestions to an approval queue.">
+          <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9d958b"/></marker></defs>
+          <rect class="z" x="20" y="14" width="310" height="222" style="fill:#fff"/><text class="zt" x="34" y="36">Hosted, always up</text>
+          <rect class="n" x="40" y="46" width="270" height="50" style="fill:#faf8f4"/><text class="t" x="175" y="76" text-anchor="middle">Roofer A: app + own data</text>
+          <rect class="n" x="40" y="108" width="270" height="50" style="fill:#faf8f4"/><text class="t" x="175" y="138" text-anchor="middle">Roofer B: app + own data</text>
+          <rect class="n" x="40" y="170" width="270" height="50" style="fill:#faf8f4"/><text class="t" x="175" y="200" text-anchor="middle">Roofer C: app + own data</text>
+          <rect class="z" x="430" y="14" width="260" height="222" style="fill:#fff"/><text class="zt" x="444" y="36">The mini</text>
+          <rect class="g" x="450" y="80" width="220" height="90"/><text class="t" x="560" y="118" text-anchor="middle">Fleet monitor</text><text class="s" x="560" y="138" text-anchor="middle">One client's data per job</text>
+          <rect class="n" x="790" y="46" width="190" height="60"/><text class="t" x="885" y="80" text-anchor="middle">Auto-fix safe issues</text>
+          <rect class="n" x="790" y="150" width="190" height="60"/><text class="t" x="885" y="184" text-anchor="middle">Your approval queue</text>
+          <path class="a" d="M310 71H380V110H450" marker-end="url(#ar2)"/>
+          <path class="a" d="M310 133H450" marker-end="url(#ar2)"/>
+          <path class="a" d="M310 195H380V156H450" marker-end="url(#ar2)"/>
+          <path class="a" d="M670 110H730V76H790" marker-end="url(#ar2)"/>
+          <path class="a" d="M670 145H730V180H790" marker-end="url(#ar2)"/>
+          <text class="l" x="365" y="128">health</text>
+          <text class="l" x="700" y="68">broken job</text>
+          <text class="l" x="700" y="200">client-facing</text>
+        </svg>
+        </div>
+      </div>
+    </section>
+
+    <section id="sources" class="block card pad">
+      <div class="chead"><h2>Sources</h2><span class="cnt">13 links. Many are vendor or blog reports, and this is not legal advice</span></div>
+      <ul class="src">
+        <li><span class="n">1</span><a href="https://www.datacamp.com/blog/best-llm-for-coding">DataCamp: best LLMs for coding</a></li>
+        <li><span class="n">2</span><a href="https://arxiv.org/pdf/2604.17187">arXiv: five open-weight coding models tested</a></li>
+        <li><span class="n">3</span><a href="https://computingforgeeks.com/mac-mini-vs-mini-pc-vs-gpu-local-llm/">Mac mini vs GPU for local LLMs</a></li>
+        <li><span class="n">4</span><a href="https://www.kunalganglani.com/blog/mac-mini-m4-vs-mac-mini-m4-pro.md">Mac mini M4 vs M4 Pro, 2026</a></li>
+        <li><span class="n">5</span><a href="https://llmbase.ai/guides/obliterated-models-explained/">Abliterated models explained</a></li>
+        <li><span class="n">6</span><a href="https://aiweekly.co/alerts/abliterlitics-benchmarks-five-llm-abliteration-methods-over-85-gpu-hours">Abliterlitics method benchmarks</a></li>
+        <li><span class="n">7</span><a href="https://www.loeb.com/en/insights/publications/2026/08/reddit-v-serpapi-llc">Loeb: Reddit v. SerpApi</a></li>
+        <li><span class="n">8</span><a href="https://www.mlex.com/mlex/artificial-intelligence/articles/2508237/us-judge-allows-reddit-anti-circumvention-claims-vs-perplexity-ai-serpapi">MLex: Reddit claims proceed</a></li>
+        <li><span class="n">9</span><a href="https://www.seroundtable.com/google-lawsuit-serpapi-dismissed-41731.html">SE Roundtable: Google v. SerpApi dismissed</a></li>
+        <li><span class="n">10</span><a href="https://prospeo.io/s/google-email-sender-guidelines">Google sender guidelines summary</a></li>
+        <li><span class="n">11</span><a href="https://leadhaste.com/blog/cold-email-compliance-laws">Cold email compliance laws</a></li>
+        <li><span class="n">12</span><a href="https://www.sophos.com/blog/inside-the-lethal-trifecta-blast-radius-reduction-in-ai-agent-deployments">Sophos: lethal trifecta</a></li>
+        <li><span class="n">13</span><a href="https://manveerc.substack.com/p/prompt-injection-defense-architecture-production-ai-agents">Prompt injection defense for agents</a></li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('#nav a'));
+  var targets=links.map(function(a){return document.querySelector(a.getAttribute('href'))}).filter(Boolean);
+  function update(){
+    var y=window.scrollY+120,cur=targets[0];
+    targets.forEach(function(t){if(t.offsetTop<=y)cur=t});
+    if(window.innerHeight+window.scrollY>=document.body.scrollHeight-4)cur=targets[targets.length-1];
+    links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+cur.id)});
+  }
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update);
+  update();
+})();
+</script>
+</body>
+</html>
