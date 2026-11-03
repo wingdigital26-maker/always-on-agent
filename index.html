@@ -433,8 +433,8 @@ section.block{margin-top:18px;scroll-margin-top:18px}
   var links=[].slice.call(document.querySelectorAll('#nav a'));
   var targets=links.map(function(a){return document.querySelector(a.getAttribute('href'))}).filter(Boolean);
   function update(){
-    var y=window.scrollY+120,cur=targets[0];
-    targets.forEach(function(t){if(t.offsetTop<=y)cur=t});
+    var cur=targets[0],best=-Infinity;
+    targets.forEach(function(t){var top=t.getBoundingClientRect().top;if(top<=120&&top>best){best=top;cur=t}});
     if(window.innerHeight+window.scrollY>=document.body.scrollHeight-4)cur=targets[targets.length-1];
     links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+cur.id)});
   }
